@@ -1,6 +1,6 @@
 const express = require("express");
 require("dotenv").config({ path: "./.env" });
-require("./Database/db"); // Automatically triggers database connection
+const databaseConnection = require("./Database/db");
 
 const userAuthRouter = require("./routes/userAuth.route");
 const paymentRouter = require("./routes/paymentIntegrate.route");
@@ -17,8 +17,9 @@ const server = express();
 server.use(express.urlencoded({ extended: true }));
 server.use(
   cors({
-    origin: ["http://localhost:3000"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 server.use(helmet());
@@ -33,6 +34,14 @@ server.use("/api/search", searchRouter);
 server.use("/", landingRouter);
 
 const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+databaseConnection
+  .then(() => {
+    console.log("✅ MongoDB Database Connected Successfully!");
+    server.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("❌ Database Connection Error:", error.message);
+    process.exitCode = 1;
+  });
