@@ -1,14 +1,14 @@
-const dns = require('dns');
-dns.setServers(['8.8.8.8', '8.8.4.4']);
 const express = require("express");
 require("dotenv").config({ path: "./.env" });
-require("./Database/db");
+require("./Database/db"); // Automatically triggers database connection
+
 const userAuthRouter = require("./routes/userAuth.route");
 const paymentRouter = require("./routes/paymentIntegrate.route");
 const menuRouter = require("./routes/menu.route");
 const cartRouter = require("./routes/cart.route");
 const searchRouter = require("./routes/serach.route");
 const landingRouter = require("./routes/landing.route");
+
 const cors = require("cors");
 const helmet = require("helmet");
 
@@ -24,27 +24,15 @@ server.use(
 server.use(helmet());
 server.use(express.json());
 
-server.get("/", (req, res) => {
-  res.send(`KFC API Server started on localhost:${PORT}`);
-});
-
-server.use("/Auth", userAuthRouter);
-server.use("/api/home", landingRouter);
-server.use("/api/searchapi", searchRouter);
-server.use("/api/product", menuRouter);
-server.use("/api/productcart", cartRouter);
+// Register Routes
+server.use("/api/auth", userAuthRouter);
 server.use("/api/payment", paymentRouter);
+server.use("/api/menu", menuRouter);
+server.use("/api/cart", cartRouter);
+server.use("/api/search", searchRouter);
+server.use("/", landingRouter);
 
 const PORT = process.env.PORT || 8080;
-
-connection
-  .then(() => {
-    server.listen(PORT, () => {
-      console.log("Connected to Database");
-      console.log(`🌎 started on http://localhost:${PORT}/`);
-    });
-  })
-  .catch((error) => {
-    console.error("MongoDB connection failed:", error.message);
-    process.exitCode = 1;
-  });
+server.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
