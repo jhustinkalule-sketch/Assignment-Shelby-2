@@ -14,7 +14,7 @@ const Box = () => {
     },[])
     
      const fetchData= async()=>{
-        let payload= await getdata("https://kfcapi.herokuapp.com/api/product/menu?type=boxmeals");
+        let payload= await getdata("https://kfc-backend-fse8.onrender.com/api/product/menu?type=boxmeals");
          dispatch(addbox(payload));
      }
 

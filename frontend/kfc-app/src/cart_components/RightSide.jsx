@@ -37,7 +37,7 @@ const RightSide = () => {
         order_id: data.id,
         handler: async (response) => {
           try {
-            const verifyURL = "https://kfcapi.herokuapp.com/api/payment/verify";
+            const verifyURL = "https://kfc-backend-fse8.onrender.com/api/payment/verify";
             const { data } = await axios.post(verifyURL, response);
             console.log("data:", data);
           } catch (err) {
@@ -54,7 +54,7 @@ const RightSide = () => {
 
     const handlePayment = async () => {
       try {
-        const orderURL = "https://kfcapi.herokuapp.com/api/payment/orders";
+        const orderURL = "https://kfc-backend-fse8.onrender.com/api/payment/orders";
         const { data } = await axios.post(orderURL, { amount: stotal });
         console.log("data:", data);
         initPayment(data.data);

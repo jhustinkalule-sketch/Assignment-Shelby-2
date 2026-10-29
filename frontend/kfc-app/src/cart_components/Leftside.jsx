@@ -16,7 +16,7 @@ const Leftside = () => {
     },[cart])
   
     const fetchdata= async ()=>{
-     let payload= await getdata("https://kfcapi.herokuapp.com/api/productcart/cart");
+    let payload= await getdata("https://kfc-backend-fse8.onrender.com/api/productcart/cart");
      dispatch(getCart(payload));
     }   
 

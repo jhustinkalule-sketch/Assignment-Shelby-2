@@ -3,12 +3,14 @@ import React, { useState } from "react";
 // import Header from "../AuthHeader_Component/AuthHeader";
 import "./login.css";
 import { Link, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../utils/api";
 // import { ToastContainer, toast } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   // const notify = () =>
   //   toast.success("Login Successful", {
   //     position: "top-center",
@@ -31,30 +33,28 @@ const Login = () => {
 
   async function loginUser(event) {
     event.preventDefault();
-    const response = await fetch("https://kfcapi.herokuapp.com/Auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
-    const data = await response.json();
-    if (data.user) {
+    setError("");
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.user) {
+        throw new Error(data.error || "Please check your email or password.");
+      }
       localStorage.setItem("token", data.user);
-      // notify();
-      alert("Login Successful")
-      const timer = setTimeout(() => {
-        navigate("/");
-      }, 2000);
-      return () => clearTimeout(timer);
-    } else {
-      // notify2();
-      alert("Please check Email or Password")
+      alert("Login Successful");
+      navigate("/");
+    } catch (requestError) {
+      setError(requestError.message || "Unable to connect. Please try again.");
     }
-    console.log("data:", data);
   }
 
   return (
@@ -116,6 +116,7 @@ const Login = () => {
               <div className="loginBtndiv">
                 <input type="submit" value="Log In" />
               </div>
+              {error && <p role="alert">{error}</p>}
               <div className="redirecttosignup">
                 <p className="redirectsignuptext">
                   Don't have an account?{" "}

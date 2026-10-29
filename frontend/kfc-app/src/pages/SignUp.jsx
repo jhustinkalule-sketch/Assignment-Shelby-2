@@ -2,6 +2,7 @@ import React, { useState } from "react";
 // import Header from "../AuthHeader_Component/AuthHeader";
 import "./signup.css";
 import { Link, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../utils/api";
 // import { ToastContainer, toast } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";
 
@@ -10,6 +11,8 @@ const SignUp = () => {
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   let navigate = useNavigate();
   // const notify = () =>
@@ -25,28 +28,32 @@ const SignUp = () => {
 
   async function registerUser(event) {
     event.preventDefault();
-    const response = await fetch("https://kfcapi.herokuapp.com/Auth/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        firstname,
-        lastname,
-        email,
-        password,
-      }),
-    });
-    const data = await response.json();
-    if (data) {
-      // notify();
+    setError("");
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstname,
+          lastname,
+          email,
+          password,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok || data.status !== "OK") {
+        throw new Error(data.message || data.error || "Unable to create account.");
+      }
       alert("Account Created Successfully");
-      const timer = setTimeout(() => {
-        navigate("/api/Auth/login");
-      }, 2000);
-      return () => clearTimeout(timer);
+      navigate("/api/Auth/login");
+    } catch (requestError) {
+      setError(requestError.message || "Unable to connect. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-    console.log("data:", data);
   }
   return (
     <>
@@ -141,8 +148,9 @@ const SignUp = () => {
                 </div>
               </div>
               <div className="signupBtndiv">
-                <input type="submit" value="Create Account" />
+                <input type="submit" value={isSubmitting ? "Creating Account..." : "Create Account"} disabled={isSubmitting} />
               </div>
+              {error && <p role="alert">{error}</p>}
               <div className="redirecttologin">
                 <p className="redirectlogintext">
                   Already a member?{" "}

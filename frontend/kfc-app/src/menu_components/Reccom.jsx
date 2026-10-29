@@ -7,7 +7,7 @@ import styles from "./item.module.css"
 const Reccom = () => {
     let [recom,setrecom]= useState([]);
     useEffect(()=>{
-      axios.get("https://kfcapi.herokuapp.com/api/searchapi/item/?search=classic")
+      axios.get("https://kfc-backend-fse8.onrender.com/api/searchapi/item/?search=classic")
       .then(({data})=>{
         setrecom(data);
       })

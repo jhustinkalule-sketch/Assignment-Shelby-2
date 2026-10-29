@@ -13,7 +13,7 @@ let acprice=price.substring(1)
 acprice=Number(acprice);
 
 const handleRemove = () =>{
-  axios.delete(`https://kfcapi.herokuapp.com/api/productcart/cart/${id}`)
+  axios.delete(`https://kfc-backend-fse8.onrender.com/api/productcart/cart/${id}`)
   fetchData();
   console.log("Deleted")
 }
@@ -40,7 +40,7 @@ const handleRemove = () =>{
                   const el={
                     id:id,image,price,title,desc,qty:count-1
                   }
-                  axios.put(`https://kfcapi.herokuapp.com/api/productcart/cart/${id}`,el)
+                  axios.put(`https://kfc-backend-fse8.onrender.com/api/productcart/cart/${id}`,el)
                   .then(({data})=>{
                     dispatch(addcartcount(el));
                     setCount(count-1);
@@ -57,7 +57,7 @@ const handleRemove = () =>{
                 const el={
                 id:id,image,price,title,desc,qty:count+1
                 }
-                axios.put(`https://kfcapi.herokuapp.com/api/productcart/cart/${id}`,el)
+                axios.put(`https://kfc-backend-fse8.onrender.com/api/productcart/cart/${id}`,el)
                .then(({data})=>{
                 setCount(count+1)
                 dispatch(addcartcount(el));
