@@ -8,6 +8,8 @@ import styles from "./Home.module.css";
 import QuickBites from "../home_components/QuickBites";
 import Favorites from "../home_components/Favorites";
 import Featured from "../home_components/Featured";
+import jackHarlowMeal from "../assets/food/home-meal-1.jpg";
+import kfcFries from "../assets/food/home-bite-4.jpg";
 
 const mainSlider = {
   infinite: true,
@@ -94,11 +96,11 @@ const Home = () => {
           <Slider {...mainSlider} className={styles.slider}>
             <div>
               <div className={styles.overlayContent}>
-                <p>NOW AVAILABLE!</p>
-                <h2>HERE'S HOW JACK WOULD DO IT</h2>
+                <p>KFC FAVORITES</p>
+                <h2>COMBOS MADE TO SHARE</h2>
                 <p>
-                  The Jack Harlow Meal is available until 7/17. Get it while
-                  it’s hot!
+                  Enjoy KFC chicken, crispy fries and a chilled drink in one
+                  meal.
                 </p>
                 <a href="/">
                   <span style={{ color: "white" }}>
@@ -108,8 +110,8 @@ const Home = () => {
                 </a>
               </div>
               <img
-                src="https://images.ctfassets.net/9tka4b3550oc/5feMdkX9xmGBVEE4TWoCVs/6daa55ed40b3d92d8639419970116fb2/JackHarlowMeal_Desktop_Home_Hero_1440x640_V1.jpg?q=75"
-                alt=""
+                src={jackHarlowMeal}
+                alt="KFC chicken meal with fries and a drink"
               />
               <div className={styles.orderingInfo}>
                 <p>
@@ -252,7 +254,7 @@ const Home = () => {
             <div className={styles.videoBanner}>
               <div className={styles.videoBanner__fig}>
                 <img
-                  src="https://digitaleat.kfc.com/menus/image/bare/kfc-IndFries?q=75"
+                  src={kfcFries}
                   alt="KFC Fries"
                 />
               </div>

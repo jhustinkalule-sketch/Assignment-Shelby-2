@@ -34,6 +34,15 @@
     cursor:pointer;
     border:1px solid grey;
 }
+.removeButton{
+    background: transparent;
+    border: 0;
+    color: #b00020;
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
+    text-decoration: underline;
+}
 .toprecom{
     display: grid;
     justify-content: space-around;

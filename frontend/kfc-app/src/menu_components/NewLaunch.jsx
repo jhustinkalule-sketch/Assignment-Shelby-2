@@ -1,6 +1,6 @@
 
 import { addlaunch } from '../redux/action';
-import { getdata } from "../utils/getdata"
+import { getMenuData } from "../utils/getMenuData"
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styles from "./item.module.css"
@@ -14,7 +14,7 @@ const NewLaunch = () => {
     },[])
     
      const fetchData= async()=>{
-        let payload= await getdata("https://kfc-backend-fse8.onrender.com/api/product/menu?type=launch");
+        let payload= await getMenuData("launch");
          dispatch(addlaunch(payload));
      }
 
@@ -23,7 +23,7 @@ const NewLaunch = () => {
       <h1>NEW LAUNCH</h1>
      <div className={styles.itembox} >
       {launch.map((el)=>{
-        return <Item {...el} key={el._id}  />
+        return <Item {...el} key={el._id || el.title}  />
       })}
      </div>
     </div>

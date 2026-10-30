@@ -1,5 +1,6 @@
 import smoothScrollTo from "../utils/smoothScrollTo"
 import styles from "./item.module.css"
+import menuStripes from "../assets/svg/menu5.svg"
 
 export const Sidebar= ()=>{
 
@@ -7,7 +8,7 @@ export const Sidebar= ()=>{
 
     return (
         <div className={styles.sidebox}>
-          <img src="https://online.kfc.co.in/static/media/Stripes_Small_OffersIcon.87fc6256.svg"></img>
+          <img src={menuStripes} alt="" />
           <h1>KFC MENU</h1>
           <h3 onClick={()=>{
             smoothScrollTo("chicken")

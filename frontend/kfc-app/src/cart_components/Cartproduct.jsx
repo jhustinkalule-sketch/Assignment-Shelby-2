@@ -1,71 +1,58 @@
 import React from 'react'
-import { useState } from 'react'
 import styles from "./cart.module.css"
-import axios from "axios"
-import { useDispatch, useSelector } from 'react-redux'
-import { addcartcount } from '../redux/action'
-import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { addcartcount, deleteCart } from '../redux/action'
+import { getFoodImage } from '../utils/foodImages'
+import { formatUgx, parseInrAmount } from '../utils/currency'
 
-const Cartproduct = ({desc,id,image,price,qty,title,_id, fetchData}) => {
-const dispatch= useDispatch();
-const [count,setCount]= useState(qty);
-let acprice=price.substring(1)
-acprice=Number(acprice);
+const Cartproduct = ({desc,id,image,price,qty,title,_id}) => {
+const dispatch = useDispatch();
+const itemId = String(id ?? _id ?? title);
+const count = Number(qty) || 1;
+const unitPrice = parseInrAmount(price);
+const itemImage = image || getFoodImage(title);
 
-const handleRemove = () =>{
-  axios.delete(`https://kfc-backend-fse8.onrender.com/api/productcart/cart/${id}`)
-  fetchData();
-  console.log("Deleted")
-}
+const handleRemove = () => dispatch(deleteCart(itemId));
 
   return (
     <div className={styles.cartproductmain} >
         <div className={styles.cartproductleft}>
-            <img src={image} alt="food" />
+            <img
+              src={itemImage}
+              onError={(event) => {
+                event.currentTarget.src = getFoodImage(title);
+              }}
+              alt={title}
+            />
             <div>
                 <h3>{title}</h3>
                 <ul>
                     <li>{desc}</li>
                 </ul>
-                <h3
-                style={{cursor:'pointer'}}
-                onClick={handleRemove}
-                >Remove</h3>
+                <button className={styles.removeButton} type="button" onClick={handleRemove}>
+                  Remove
+                </button>
             </div>
         </div>
         <div className={styles.cartproductright} >
             
-                <button disabled={qty==1||count==1}
-                onClick={()=>{
-                  const el={
-                    id:id,image,price,title,desc,qty:count-1
-                  }
-                  axios.put(`https://kfc-backend-fse8.onrender.com/api/productcart/cart/${id}`,el)
-                  .then(({data})=>{
-                    dispatch(addcartcount(el));
-                    setCount(count-1);
-                    
-                  })
-                }
-                }
-                >&#8211;</button>
+                <button
+                  type="button"
+                  aria-label={`Remove one ${title}`}
+                  disabled={count <= 1}
+                  onClick={() => dispatch(addcartcount({ id: itemId, qty: count - 1 }))}
+                >
+                  &#8211;
+                </button>
                 <h4>{count}</h4>
                 <button
-                onClick={()=>{
-                  
-                  
-                const el={
-                id:id,image,price,title,desc,qty:count+1
-                }
-                axios.put(`https://kfc-backend-fse8.onrender.com/api/productcart/cart/${id}`,el)
-               .then(({data})=>{
-                setCount(count+1)
-                dispatch(addcartcount(el));
-                })
-                }}
-                
-                >&#43;</button>
-                <h3>{Math.round(acprice*count)}</h3>
+                  type="button"
+                  aria-label={`Add one ${title}`}
+                  onClick={() => dispatch(addcartcount({ id: itemId, qty: count + 1 }))}
+                >
+                  &#43;
+                </button>
+                <h3>{formatUgx(unitPrice * count)}</h3>
             
         </div>
     </div>

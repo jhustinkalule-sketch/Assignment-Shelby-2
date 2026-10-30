@@ -2,7 +2,7 @@ import React from 'react'
 import { useEffect } from 'react';
 import { useDispatch ,useSelector} from 'react-redux'
 import { addbeverages } from '../redux/action';
-import { getdata } from '../utils/getdata';
+import { getMenuData } from '../utils/getMenuData';
 import styles from "./item.module.css"
 import Item from './Item';
 
@@ -14,7 +14,7 @@ useEffect(()=>{
 },[])
 
  const fetchData= async()=>{
-    let payload= await getdata("https://kfc-backend-fse8.onrender.com/api/product/menu?type=beverages");
+    let payload= await getMenuData("beverages");
      dispatch(addbeverages(payload));
  }
 
@@ -23,7 +23,7 @@ useEffect(()=>{
     <h1>BEVERAGES</h1>
    <div className={styles.itembox} >
     {beverage.map((el)=>{
-      return <Item {...el} key={el._id}  />
+      return <Item {...el} key={el._id || el.title}  />
     })}
    </div>
   </div>

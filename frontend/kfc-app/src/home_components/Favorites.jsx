@@ -2,6 +2,8 @@ import React from "react";
 import Slider from "react-slick";
 import SliderData from "../SliderData.json";
 import styles from "./HomeSlider.module.css";
+import { getFoodImage } from "../utils/foodImages";
+import { convertInrTextToUgx, formatUgx } from "../utils/currency";
 
 
 export default class SlickGoTo extends React.Component {
@@ -66,13 +68,13 @@ export default class SlickGoTo extends React.Component {
           {SliderData.favorites.map((item) => (
             <div key={Math.random() * 1000} style={{ outline: "none" }}>
               <img
-                src={item.image}
-                alt={item.type}
+                src={getFoodImage(item.title)}
+                alt={item.title}
                 className={styles.itemImg}
               />
               <p className={styles.itemTitle}>{item.title}</p>
-              <p className={styles.itemPrice}>{item.price}</p>
-              <p className={styles.itemDesc}>{item.desc}</p>
+              <p className={styles.itemPrice}>{formatUgx(item.price)}</p>
+              <p className={styles.itemDesc}>{convertInrTextToUgx(item.desc)}</p>
             </div>
           ))}
         </Slider>

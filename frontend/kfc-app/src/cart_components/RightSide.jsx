@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import "../pages/Cart.css"
+import { formatUgx, parseInrAmount } from "../utils/currency";
 
 const RightSide = () => {
     const [input, setInput] = useState(false);
@@ -16,8 +17,7 @@ const RightSide = () => {
 
     useEffect(()=>{
       let total= cart.reduce((acc,el)=>{
-        let price= el.price.substring(1);
-        price=Number(price);  
+        const price = parseInrAmount(el.price);
         return Math.round(price*el.qty+acc);
     },0)
     setstotal(total)
@@ -82,7 +82,7 @@ const RightSide = () => {
             }}
           >
             <div>SubTotal</div>
-            <div>₹{stotal}</div>
+            <div>{formatUgx(stotal)}</div>
           </div>
           <div
             style={{
@@ -92,7 +92,7 @@ const RightSide = () => {
             }}
           >
             <div>GST</div>
-            <div>₹{stotal}</div>
+            <div>{formatUgx(stotal)}</div>
           </div>
           <div
             style={{
@@ -104,7 +104,7 @@ const RightSide = () => {
             <div style={{ marginRight: "20px" }}>
               Restaurant Handling (Incl. Taxes)
             </div>
-            <div>₹{stotal}</div>
+            <div>{formatUgx(stotal)}</div>
           </div>
           {input ? (
             <div
@@ -115,7 +115,7 @@ const RightSide = () => {
               }}
             >
               <div style={{ marginRight: "20px" }}>Add Hope</div>
-              <div>₹5</div>
+              <div>{formatUgx(5)}</div>
             </div>
           ) : (
             ""
@@ -129,7 +129,7 @@ const RightSide = () => {
               <input onInput={handleInput} type="checkbox" />
             </div>
             <div style={{ marginTop: "-17px" }}>
-              <p>Donate ₹5.00 Tick to Add Hope.</p>
+              <p>Donate {formatUgx(5)}. Tick to Add Hope.</p>
               <p>Our goal is to feed 20 million people by 2022.</p>
             </div>
             <div>
@@ -142,12 +142,12 @@ const RightSide = () => {
           {path=="/cart"?(   <button onClick={()=>navigate("/checkout")} className="redButton">
             <div style={{ display: "flex", justifyContent: "space-around" }}>
               <p>Checkout</p>
-              <p>₹{!input?stotal:stotal+5}</p>
+              <p>{formatUgx(!input?stotal:stotal+5)}</p>
             </div>
           </button>):(   <button onClick={handlePayment} className="redButton">
             <div style={{ display: "flex", justifyContent: "space-around" }}>
               <p>Payment</p>
-              <p>₹{!input?stotal:stotal+5}</p>
+              <p>{formatUgx(!input?stotal:stotal+5)}</p>
             </div>
           </button>)}
        

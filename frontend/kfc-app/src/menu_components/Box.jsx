@@ -1,6 +1,6 @@
 
 import { addbox } from '../redux/action';
-import { getdata } from "../utils/getdata"
+import { getMenuData } from "../utils/getMenuData"
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styles from "./item.module.css"
@@ -14,7 +14,7 @@ const Box = () => {
     },[])
     
      const fetchData= async()=>{
-        let payload= await getdata("https://kfc-backend-fse8.onrender.com/api/product/menu?type=boxmeals");
+        let payload= await getMenuData("boxmeals");
          dispatch(addbox(payload));
      }
 
@@ -24,7 +24,7 @@ const Box = () => {
     <h1>BOX MEALS</h1>
    <div className={styles.itembox} >
     {box.map((el)=>{
-      return <Item {...el} key={el._id}  />
+      return <Item {...el} key={el._id || el.title}  />
     })}
    </div>
   </div>

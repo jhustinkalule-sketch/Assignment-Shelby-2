@@ -1,75 +1,80 @@
-import axios from 'axios'
 import React from 'react'
-import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addcart, addcartcount } from '../redux/action'
 import styles from "./item.module.css"
 import Reccom from './Reccom'
 import Beverages from "./Beverages"
 import { useNavigate } from 'react-router-dom'
+import { getFoodImage } from '../utils/foodImages'
+import { BsCartPlus } from 'react-icons/bs'
+import { convertInrTextToUgx, formatUgx } from '../utils/currency'
 
 const SingleItem = ({_id,image,price,title,desc}) => {
 const dispatch = useDispatch();
-const [count,setCount]= useState(0)
+const cart = useSelector((state) => state.cart);
 const navigate= useNavigate()
+const itemId = String(_id ?? title);
+const quantity = cart.find(
+  (item) => String(item.id ?? item._id ?? item.title) === itemId
+)?.qty || 0;
+const fallbackImage = getFoodImage(title);
 
   return (
     <div className={styles.singleupperbox} >
 
     <div className={styles.mainsinglebox} >
-      <img src={image} alt="food" />
+      <img
+        src={image || fallbackImage}
+        onError={(event) => {
+          event.currentTarget.src = fallbackImage;
+        }}
+        alt={title}
+      />
       <h2>{title}</h2>
-      <p className={styles.singledesc} >{desc}</p>
+      <p className={styles.singledesc} >{convertInrTextToUgx(desc)}</p>
       <p>Calories {Math.round(Math.random()*(2000-1000)+1000)}</p>
-      <h2>{price}</h2>
+      <h2>{formatUgx(price)}</h2>
        
         <div className={styles.cartbutton}>
-          <h3> {!count?(<p className={styles.addto}
-            onClick={ ()=>{
-            setCount(count+1)
-            const el={
-                id:_id,image,price,title,desc,qty:count+1
-            }
-            axios.post("https://kfc-backend-fse8.onrender.com/api/productcart/cart",el)
-            .then(()=>dispatch(addcart(el)))
-            
-            }}> Add to cart</p>):(<div>
-
-              
+          {quantity === 0 ? (
             <button
-            className={styles.minus}
-            onClick={()=>{setCount(count-1)
-             const el={
-                id:_id,image,price,title,desc,qty:count-1
-            }
-            axios.put(`https://kfc-backend-fse8.onrender.com/api/productcart/cart/${_id}`,el)
-            .then(()=>{
-              dispatch(addcartcount(el));
-            })
-            } }>&#8211;</button>
-
-            <span>{count}</span>
-
-
-            <button 
-            className={styles.plus}
-            onClick={()=>{setCount(count+1)
-            const el={
-                id:_id,image,price,title,desc,qty:count+1
-            }
-            axios.put(`https://kfc-backend-fse8.onrender.com/api/productcart/cart/${_id}`,el)
-            .then(()=>{
-              dispatch(addcartcount(el));
-            })
-            }} >&#43;</button>
-
-
-           </div>)} </h3>
-           <img 
-          style={{cursor:"pointer"}}
-          onClick={()=>{
-            navigate("/cart")
-          }} src="https://online.kfc.co.in/static/media/Icon_Add_to_Cart.58b87a9b.svg"/>
+              className={styles.addto}
+              type="button"
+              onClick={() => dispatch(addcart({
+                id: itemId,
+                image: image || fallbackImage,
+                price,
+                title,
+                desc,
+                qty: 1,
+              }))}
+            >
+              Add to Cart
+            </button>
+          ) : (
+            <div>
+              <button
+                className={styles.minus}
+                type="button"
+                aria-label={`Remove one ${title}`}
+                onClick={() => dispatch(addcartcount({ id: itemId, qty: quantity - 1 }))}
+              >
+                &#8211;
+              </button>
+              <span>{quantity}</span>
+              <button
+                className={styles.plus}
+                type="button"
+                aria-label={`Add one ${title}`}
+                onClick={() => dispatch(addcartcount({ id: itemId, qty: quantity + 1 }))}
+              >
+                &#43;
+              </button>
+            </div>
+          )}
+          <button type="button" aria-label="Open cart" onClick={() => navigate("/cart")}>
+            <BsCartPlus aria-hidden="true" />
+          </button>
         </div>
         <h1 className={styles.pepsi}>You can enjoy this delicious dish with </h1>
         <Beverages/>

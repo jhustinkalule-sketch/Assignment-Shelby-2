@@ -38,6 +38,10 @@ ___
 * React Slick
 * Git
 
+### Backend Configuration
+
+Configure `DATABASE` and `SECRET_KEY` as backend environment variables. Set both in the Render service and in the local backend `.env` file; use a strong, private value for `SECRET_KEY` and do not commit it.
+
 ### Features
 ___
 * Authentication

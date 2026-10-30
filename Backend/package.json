@@ -19,6 +19,7 @@
     "express-validation": "^4.1.0",
     "helmet": "^5.1.0",
     "jsonwebtoken": "^8.5.1",
+    "mongodb-memory-server": "^11.3.0",
     "mongoose": "^6.3.8",
     "nodemon": "^2.0.16",
     "razorpay": "^2.8.1",

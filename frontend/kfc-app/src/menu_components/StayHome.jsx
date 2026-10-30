@@ -1,6 +1,6 @@
 
 import { addstayhome } from '../redux/action';
-import { getdata } from "../utils/getdata"
+import { getMenuData } from "../utils/getMenuData"
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styles from "./item.module.css"
@@ -13,7 +13,7 @@ const StayHome = () => {
     },[])
     
      const fetchData= async()=>{
-        let payload= await getdata("https://kfc-backend-fse8.onrender.com/api/product/menu?type=stayhome");
+        let payload= await getMenuData("stayhome");
          dispatch(addstayhome(payload));
      }
 
@@ -22,7 +22,7 @@ const StayHome = () => {
     <h1>STAY HOME SPECIALS</h1>
    <div className={styles.itembox} >
     {stayhome.map((el)=>{
-      return <Item {...el} key={el._id}  />
+      return <Item {...el} key={el._id || el.title}  />
     })}
    </div>
   </div>

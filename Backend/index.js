@@ -1,12 +1,14 @@
 const express = require("express");
 require("dotenv").config({ path: "./.env" });
-const connection = require("./Database/db");
+const databaseConnection = require("./Database/db");
+
 const userAuthRouter = require("./routes/userAuth.route");
 const paymentRouter = require("./routes/paymentIntegrate.route");
 const menuRouter = require("./routes/menu.route");
 const cartRouter = require("./routes/cart.route");
 const searchRouter = require("./routes/serach.route");
 const landingRouter = require("./routes/landing.route");
+
 const cors = require("cors");
 const helmet = require("helmet");
 
@@ -15,28 +17,31 @@ const server = express();
 server.use(express.urlencoded({ extended: true }));
 server.use(
   cors({
-    origin: ["http://localhost:3000"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 server.use(helmet());
 server.use(express.json());
 
-server.get("/", (req, res) => {
-  res.send(`KFC API Server started on localhost:${PORT}`);
-});
-
-server.use("/Auth", userAuthRouter);
-server.use("/api/home", landingRouter);
-server.use("/api/searchapi", searchRouter);
-server.use("/api/product", menuRouter);
-server.use("/api/productcart", cartRouter);
+// Register Routes
+server.use("/api/auth", userAuthRouter);
 server.use("/api/payment", paymentRouter);
+server.use("/api/menu", menuRouter);
+server.use("/api/cart", cartRouter);
+server.use("/api/search", searchRouter);
+server.use("/", landingRouter);
 
 const PORT = process.env.PORT || 8080;
-
-server.listen(PORT, async () => {
-  await connection;
-  console.log("Connected to Database");
-  console.log(`🌎 started on http://localhost:${PORT}/`);
-});
+databaseConnection
+  .then(() => {
+    console.log("✅ MongoDB Database Connected Successfully!");
+    server.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("❌ Database Connection Error:", error.message);
+    process.exitCode = 1;
+  });

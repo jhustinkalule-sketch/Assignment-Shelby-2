@@ -11,8 +11,8 @@ userAuthRouter.post("/signup", async (req, res) => {
     const existingUser = await userDetails.findOne({
       email: req.body.email,
     });
-    if(existingUser){
-      res.json({message:"Email already exists"});
+    if (existingUser) {
+      return res.status(409).json({ status: "ERROR", message: "Email already exists" });
     }
     const newPassword = await bcrypt.hash(req.body.password, 10);
     await userDetails.create({
@@ -22,42 +22,62 @@ userAuthRouter.post("/signup", async (req, res) => {
       password: newPassword,
       token: "",
     });
-    res.json({ status: "OK" });
+    res.status(201).json({ status: "OK" });
   } catch (err) {
     console.log(err);
-    res.json({ status: "ERROR", error: "Duplicate Email" });
+    res.status(500).json({ status: "ERROR", error: "Unable to create account" });
   }
 });
 
 // LOGIN
 userAuthRouter.post("/login", async (req, res) => {
-  const user = await userDetails.findOne({
-    email: req.body.email,
-    // password: req.body.password,
-  });
-  if (!user) {
-    return { status: "Error", error: "Invalid User" };
-  }
-  const isPasswordValid = await bcrypt.compare(
-    req.body.password,
-    user.password
-  );
-  if (isPasswordValid) {
+  try {
+    const user = await userDetails.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(401).json({
+        status: "ERROR",
+        error: "Invalid email or password",
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        status: "ERROR",
+        error: "Invalid email or password",
+      });
+    }
+
+    if (!process.env.SECRET_KEY) {
+      console.error("SECRET_KEY environment variable is required for login");
+      return res.status(500).json({
+        status: "ERROR",
+        error: "Login is temporarily unavailable",
+      });
+    }
+
     const token = jwt.sign(
       {
-        firstname: userDetails.firstname,
-        lastname: userDetails.lastname,
-        email: userDetails.email,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
       },
       process.env.SECRET_KEY
     );
     await userDetails.findOneAndUpdate(
       { email: req.body.email },
-      { token: token }
+      { token }
     );
     return res.json({ status: "OK", user: token });
-  } else {
-    return res.json({ status: "ERROR", user: false });
+  } catch (err) {
+    console.error("Login failed:", err);
+    return res.status(500).json({
+      status: "ERROR",
+      error: "Unable to log in. Please try again.",
+    });
   }
 });
 

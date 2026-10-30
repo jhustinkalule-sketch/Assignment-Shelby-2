@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
-const db = process.env.DATABASE;
-const connection = mongoose.connect(db, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-module.exports = connection;
+const databaseUrl = process.env.DATABASE;
+
+module.exports = databaseUrl
+  ? mongoose.connect(databaseUrl, { serverSelectionTimeoutMS: 10000 })
+  : Promise.reject(new Error("DATABASE environment variable is required"));

@@ -38,6 +38,28 @@
   cursor:pointer
 }
 
+.cartbutton>button{
+    background: transparent;
+    border: 0;
+    color: inherit;
+}
+
+.cartbutton>button:first-child{
+    font: inherit;
+    font-weight: 700;
+}
+
+.cartbutton>button:last-child{
+    display: grid;
+    place-items: center;
+    padding: 4px;
+}
+
+.cartbutton>button:last-child svg{
+    width: 24px;
+    height: 24px;
+}
+
 .plus,.minus{
     border-radius: 50%;
     font-size: 25px;

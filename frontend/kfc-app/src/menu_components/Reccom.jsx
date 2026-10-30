@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import styles from "./item.module.css"
+import { convertInrTextToUgx, formatUgx } from '../utils/currency'
 
 
 
@@ -21,8 +22,8 @@ const Reccom = () => {
               <div><img src={el.image} alt="" /></div>
                <div>
                 <h3>{el.title}</h3>
-                <p>{el.desc}</p>
-                <h3>{el.price}</h3>
+                <p>{convertInrTextToUgx(el.desc)}</p>
+                <h3>{formatUgx(el.price)}</h3>
               </div>
             </div>
        
